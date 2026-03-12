@@ -45,9 +45,9 @@ COLLECTION_CONFIG = {
 # ============================================
 SECURITY_CONFIG = {
     "encryption_enabled": True,          # Fungasha data kwa siri
-    "encryption_key": "SILA-SECRET-KEY-2026",  # Badilisha hii!
+    "encryption_key": "SILA-2026",  # Badilisha hii!
     "require_auth": True,                 # Hitaji nenosiri
-    "master_password": "Sila@2026Admin",   # Nenosiri kuu
+    "master_password": "Sila0022",   # Nenosiri kuu
     "session_timeout": 3600,               # Kikao kinamalizika baada ya saa 1
     "max_login_attempts": 5,                # Jaribio la juu la kuingia
 }
@@ -70,10 +70,10 @@ SERVER_CONFIG = {
 # ============================================
 BOT_CONFIG = {
     "enable_whatsapp": True,
-    "whatsapp_number": "+255XXXXXXXXX",     # Namba yako ya WhatsApp
+    "whatsapp_number": "+255650034217",     # Namba yako ya WhatsApp
     "enable_telegram": False,
-    "telegram_token": "YOUR_TOKEN_HERE",
-    "telegram_chat_id": "YOUR_CHAT_ID",
+    "telegram_token": "8790913076:AAHnlPJNBDaiNS--OwCv6v5Kce9DmeS1pj8",
+    "telegram_chat_id": "8790913076",
     "daily_report_time": "20:00",            # Ripoti ya kila siku saa 8 mchana
     "alert_on_threshold": True,               # Arifa data ikifikia kiwango
     "data_threshold_mb": 1000,                # Arifa baada ya MB 1000
