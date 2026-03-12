@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILA DATA HACK 2026 - Premium Dashboard</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        /* ==================================================
+           SILA DATA HACK 2026 - PREMIUM DARK THEME
+           Rangi: Blue on Black Premium
+           ================================================== */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Matrix Rain Effect (Premium) */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 0;
+            background: repeating-linear-gradient(0deg, 
+                rgba(0, 102, 255, 0.1) 0px, 
+                transparent 1px,
+                transparent 2px);
+            animation: matrix 20s linear infinite;
+        }
+        
+        @keyframes matrix {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 20px; }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Premium Header */
+        .header {
+            background: linear-gradient(90deg, #001122 0%, #002244 50%, #001122 100%);
+            border-radius: 20px;
+            padding: 25px 35px;
+            margin-bottom: 25px;
+            border: 1px solid #0066FF;
+            box-shadow: 0 0 30px rgba(0, 102, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,102,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 48px;
+            color: #0066FF;
+            text-shadow: 0 0 20px #0066FF;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        
+        .logo-text h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #fff 0%, #0066FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .logo-text p {
+            color: #8899aa;
+            font-size: 14px;
+        }
+        
+        .version-badge {
+            background: #0066FF;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 0 20px #0066FF;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 10px #0066FF; }
+            to { box-shadow: 0 0 30px #0066FF; }
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .status-card {
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #0066FF;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+            border-color: #0066FF;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+        }
+        
+        .status-title {
+            color: #8899aa;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-title i {
+            color: #0066FF;
+        }
+        
+        .status-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .status-unit {
+            color: #0066FF;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        
+        .status-change {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #00C851;
+        }
+        
+        /* Main Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        /* Charts */
+        .chart-container {
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .chart-header h3 {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-header h3 i {
+            color: #0066FF;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #8899aa;
+            font-size: 13px;
+        }
+        
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+        
+        /* Networks List */
+        .networks-list {
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .network-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        
+        .network-item:hover {
+            background: rgba(0, 102, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .network-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .network-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0066FF 0%, #00CCFF 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .network-icon i {
+            color: #000;
+            font-size: 20px;
+        }
+        
+        .network-details h4 {
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        
+        .network-details p {
+            color: #8899aa;
+            font-size: 12px;
+        }
+        
+        .network-stats {
+            text-align: right;
+        }
+        
+        .network-stats .value {
+            color: #0066FF;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .network-stats .label {
+            color: #8899aa;
+            font-size: 11px;
+        }
+        
+        /* Data Table Premium */
+        .data-table-container {
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            margin-top: 25px;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .table-header h3 {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .table-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .table-controls button {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .table-controls button:hover {
+            background: #0066FF;
+            border-color: #0066FF;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 15px 10px;
+            color: #8899aa;
+            font-weight: 500;
+            border-bottom: 2px solid #333;
+        }
+        
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #333;
+            color: #fff;
+        }
+        
+        tr:hover td {
+            background: rgba(0, 102, 255, 0.1);
+        }
+        
+        .badge {
+            background: rgba(0, 102, 255, 0.2);
+            color: #0066FF;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-5px);
+            border-color: #0066FF;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+        }
+        
+        .action-btn i {
+            font-size: 24px;
+            color: #0066FF;
+            margin-bottom: 10px;
+        }
+        
+        .action-btn span {
+            display: block;
+            font-size: 14px;
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #0066FF;
+            z-index: 9999;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #333;
+            border-top-color: #0066FF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .status-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Scrollbar Premium */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #0066FF;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00CCFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p style="color: #fff; margin-top: 15px;">Inapakia data...</p>
+    </div>
+    
+    <div class="container">
+        <!-- Premium Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-shield-halos"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>SILA DATA HACK</h1>
+                        <p>Premium Data Intelligence System 2026</p>
+                    </div>
+                </div>
+                <div class="version-badge" id="liveTime">
+                    <i class="fas fa-clock"></i> <span>--:--:--</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">
+            <div class="status-card">
+                <div class="status-title">
+                    <i class="fas fa-database"></i> Jumla ya Data
+                </div>
+                <div class="status-value" id="totalData">0</div>
+                <div class="status-unit">MB</div>
+                <div class="status-change" id="totalChange">
+                    <i class="fas fa-arrow-up"></i> +0%
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-title">
+                    <i class="fas fa-wifi"></i> Mtandao Sasa
+                </div>
+                <div class="status-value" id="currentNetwork">-</div>
+                <div class="status-unit" id="networkSignal"></div>
+                <div class="status-change" id="networkStatus">
+                    <i class="fas fa-circle" style="color: #00C851;"></i> Connected
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-title">
+                    <i class="fas fa-calendar-day"></i> Data za Leo
+                </div>
+                <div class="status-value" id="todayData">0</div>
+                <div class="status-unit">MB</div>
+                <div class="status-change" id="todayEntries">
+                    Rekodi 0
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-title">
+                    <i class="fas fa-shield-alt"></i> Hali ya Mfumo
+                </div>
+                <div class="status-value" id="systemStatus">ACTIVE</div>
+                <div class="status-unit" id="uptime"></div>
+                <div class="status-change" id="encryptionStatus">
+                    <i class="fas fa-lock"></i> Encrypted
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>
+                        <i class="fas fa-chart-line"></i>
+                        Matumizi ya Data (Saa 24 zilizopita)
+                    </h3>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #0066FF;"></div>
+                            <span>Data (MB)</span>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="dataChart" style="width: 100%; height: 300px;"></canvas>
+            </div>
+            
+            <!-- Networks List -->
+            <div class="networks-list">
+                <div class="chart-header">
+                    <h3>
+                        <i class="fas fa-network-wired"></i>
+                        Mitandao Inayotumika
+                    </h3>
+                    <span class="badge" id="networksCount">0</span>
+                </div>
+                <div id="networksContainer">
+                    <!-- Networks will be loaded here -->
+                    <div class="network-item">
+                        <div class="network-info">
+                            <div class="network-icon">
+                                <i class="fas fa-wifi"></i>
+                            </div>
+                            <div class="network-details">
+                                <h4>Inapakia...</h4>
+                                <p>Subiri taarifa</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Table -->
+        <div class="data-table-container">
+            <div class="table-header">
+                <h3>
+                    <i class="fas fa-table"></i>
+                    Historia ya Data (Rekodi 50 za Mwisho)
+                </h3>
+                <div class="table-controls">
+                    <button onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button onclick="exportData()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+            
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Muda</th>
+                        <th>Mtandao</th>
+                        <th>Data (MB)</th>
+                        <th>Ishara</th>
+                        <th>Aina</th>
+                        <th>Hali</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #8899aa;">
+                            Inasubiri data...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="action-btn" onclick="takeSnapshot()">
+                <i class="fas fa-camera"></i>
+                <span>Snapshot ya Sasa</span>
+            </div>
+            <div class="action-btn" onclick="generateReport()">
+                <i class="fas fa-file-pdf"></i>
+                <span>Ripoti ya Leo</span>
+            </div>
+            <div class="action-btn" onclick="backupNow()">
+                <i class="fas fa-database"></i>
+                <span>Backup Data</span>
+            </div>
+            <div class="action-btn" onclick="analyzePatterns()">
+                <i class="fas fa-brain"></i>
+                <span>Chambua Mifumo</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // SILA DATA HACK 2026 - Premium Dashboard JavaScript
+        // Blue on Black Theme - Premium Edition
+        
+        // Global variables
+        let chart = null;
+        let refreshInterval = 5000; // Refresh every 5 seconds
+        let dataHistory = [];
+        
+        // Live time update
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('sw-TZ', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.querySelector('#liveTime span').textContent = timeString;
+        }
+        setInterval(updateTime, 1000);
+        
+        // Show loading
+        function showLoading(show = true) {
+            const loader = document.getElementById('loading');
+            if (show) {
+                loader.classList.add('active');
+            } else {
+                loader.classList.remove('active');
+            }
+        }
+        
+        // Fetch data from API
+        async function fetchData() {
+            try {
+                showLoading(true);
+                
+                // Fetch multiple endpoints in parallel
+                const [dataRes, statsRes, networksRes] = await Promise.all([
+                    fetch('/api/data?limit=50'),
+                    fetch('/api/stats'),
+                    fetch('/api/networks')
+                ]);
+                
+                const data = await dataRes.json();
+                const stats = await statsRes.json();
+                const networks = await networksRes.json();
+                
+                updateDashboard(data, stats, networks);
+                updateChart(data);
+                updateTable(data);
+                
+                showLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                showLoading(false);
+                showError('Imeshindikana kupakia data');
+            }
+        }
+        
+        // Update status cards
+        function updateDashboard(data, stats, networks) {
+            // Total data
+            document.getElementById('totalData').textContent = stats.total_data?.toFixed(2) || '0';
+            
+            // Current network
+            if (networks && networks.length > 0) {
+                document.getElementById('currentNetwork').textContent = networks[0].name || '-';
+                document.getElementById('networkSignal').textContent = networks[0].signal || '';
+            }
+            
+            // Today's data
+            document.getElementById('todayData').textContent = stats.today_data?.toFixed(2) || '0';
+            document.getElementById('todayEntries').innerHTML = `<i class="fas fa-list"></i> Rekodi ${stats.today_entries || 0}`;
+            
+            // Networks count
+            document.getElementById('networksCount').textContent = stats.unique_networks || '0';
+            
+            // Update networks list
+            updateNetworksList(networks);
+        }
+        
+        // Update networks list
+        function updateNetworksList(networks) {
+            const container = document.getElementById('networksContainer');
+            
+            if (!networks || networks.length === 0) {
+                container.innerHTML = `
+                    <div class="network-item">
+                        <div class="network-info">
+                            <div class="network-icon">
+                                <i class="fas fa-wifi"></i>
+                            </div>
+                            <div class="network-details">
+                                <h4>Hakuna mtandao</h4>
+                                <p>Subiri kukusanya data...</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            networks.slice(0, 5).forEach(net => {
+                html += `
+                    <div class="network-item">
+                        <div class="network-info">
+                            <div class="network-icon">
+                                <i class="fas fa-wifi"></i>
+                            </div>
+                            <div class="network-details">
+                                <h4>${net.name || 'Unknown'}</h4>
+                                <p>Imeonekana: ${net.last_seen || 'Sasa hivi'}</p>
+                            </div>
+                        </div>
+                        <div class="network-stats">
+                            <div class="value">${net.total_connections || 0}</div>
+                            <div class="label">Mara</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Update chart
+        function updateChart(data) {
+            if (!data || data.length === 0) return;
+            
+            // Process data for chart (last 24 hours)
+            const hours = {};
+            const now = new Date();
+            
+            for (let i = 23; i >= 0; i--) {
+                const hour = new Date(now - i * 3600000).getHours();
+                hours[`${hour}:00`] = 0;
+            }
+            
+            data.forEach(record => {
+                const date = new Date(record.timestamp);
+                const hourKey = `${date.getHours()}:00`;
+                if (hours.hasOwnProperty(hourKey)) {
+                    hours[hourKey] += record.data_used || 0;
+                }
+            });
+            
+            const ctx = document.getElementById('dataChart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(hours),
+                    datasets: [{
+                        label: 'Matumizi ya Data (MB)',
+                        data: Object.values(hours),
+                        borderColor: '#0066FF',
+                        backgroundColor: 'rgba(0, 102, 255, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#0066FF',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: '#1e1e1e',
+                            titleColor: '#fff',
+                            bodyColor: '#8899aa',
+                            borderColor: '#0066FF',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#8899aa'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#8899aa',
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update table
+        function updateTable(data) {
+            const tbody = document.getElementById('tableBody');
+            
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #8899aa;">
+                            Hakuna data ya kuonyesha
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            data.forEach(record => {
+                const date = new Date(record.timestamp);
+                const timeStr = date.toLocaleString('sw-TZ');
+                
+                // Determine signal strength color
+                let signalColor = '#8899aa';
+                if (record.signal_strength) {
+                    const signal = parseInt(record.signal_strength);
+                    if (signal > -50) signalColor = '#00C851';
+                    else if (signal > -70) signalColor = '#FFBB33';
+                    else signalColor = '#FF4444';
+                }
+                
+                html += `
+                    <tr>
+                        <td>${timeStr}</td>
+                        <td>
+                            <i class="fas fa-wifi" style="color: #0066FF; margin-right: 5px;"></i>
+                            ${record.network_name || 'Unknown'}
+                        </td>
+                        <td style="color: #0066FF; font-weight: bold;">${record.data_used?.toFixed(2) || '0'} MB</td>
+                        <td>
+                            <span style="color: ${signalColor}">
+                                <i class="fas fa-signal"></i> ${record.signal_strength || 'N/A'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge">${record.connection_type || 'wifi'}</span>
+                        </td>
+                        <td>
+                            <i class="fas fa-circle" style="color: #00C851; font-size: 8px;"></i>
+                            Active
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        // Refresh data manually
+        function refreshData() {
+            fetchData();
+            showNotification('Data inaburudishwa...', 'info');
+        }
+        
+        // Export data
+        async function exportData() {
+            try {
+                showLoading(true);
+                const response = await fetch('/api/export');
+                const blob = await response.blob();
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sila-data-${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                showNotification('Data imepakuliwa!', 'success');
+                showLoading(false);
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Imeshindikana kupakua data', 'error');
+                showLoading(false);
+            }
+        }
+        
+        // Take snapshot
+        function takeSnapshot() {
+            showNotification('Snapshot imechukuliwa!', 'success');
+        }
+        
+        // Generate report
+        function generateReport() {
+            showNotification('Ripoti inatayarishwa...', 'info');
+        }
+        
+        // Backup now
+        async function backupNow() {
+            try {
+                showLoading(true);
+                const response = await fetch('/api/backup', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Backup imeundwa!', 'success');
+                } else {
+                    showNotification('Backup imeshindikana', 'error');
+                }
+                showLoading(false);
+            } catch (error) {
+                showNotification('Hitilafu ya backup', 'error');
+                showLoading(false);
+            }
+        }
+        
+        // Analyze patterns
+        function analyzePatterns() {
+            showNotification('Inachambua mifumo ya data...', 'info');
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#00C851' : type === 'error' ? '#FF4444' : '#0066FF'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Show error
+        function showError(message) {
+            const statusBar = document.getElementById('statusBar');
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                background: rgba(255, 68, 68, 0.2);
+                border: 1px solid #FF4444;
+                border-radius: 10px;
+                padding: 15px;
+                margin-bottom: 20px;
+                color: #FF4444;
+                text-align: center;
+            `;
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            
+            statusBar.parentNode.insertBefore(errorDiv, statusBar.nextSibling);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+            setInterval(fetchData, refreshInterval);
+        });
+    </script>
+</body>
+</html>
