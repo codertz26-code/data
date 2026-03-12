@@ -117,4 +117,95 @@ class DatabaseBackup:
             if backup_file.endswith('.zip'):
                 with zipfile.ZipFile(backup_file, 'r') as zipf:
                     zipf.extractall(self.backup_dir)
-                    backup_file = backup_file
+                    backup_file = backup_file.replace('.zip', '')
+            
+            # Aina ya backup
+            if backup_file.endswith('.db'):
+                # Full database
+                shutil.copy2(backup_file, self.db_path)
+                logger.info(f"✅ Database imerejeshwa kutoka: {backup_file}")
+                
+            elif backup_file.endswith('.sql'):
+                # Structure only
+                conn = sqlite3.connect(self.db_path)
+                cursor = conn.cursor()
+                
+                with open(backup_file, 'r') as f:
+                    sql_script = f.read()
+                    cursor.executescript(sql_script)
+                    
+                conn.commit()
+                conn.close()
+                logger.info(f"✅ Structure imerejeshwa kutoka: {backup_file}")
+                
+            elif backup_file.endswith('.json'):
+                # Data only
+                with open(backup_file, 'r') as f:
+                    backup_data = json.load(f)
+                    
+                conn = sqlite3.connect(self.db_path)
+                cursor = conn.cursor()
+                
+                for table, rows in backup_data.items():
+                    for row in rows:
+                        # Unda INSERT statement
+                        columns = ', '.join(row.keys())
+                        placeholders = ', '.join(['?' for _ in row])
+                        query = f"INSERT OR REPLACE INTO {table} ({columns}) VALUES ({placeholders})"
+                        
+                        cursor.execute(query, list(row.values()))
+                        
+                conn.commit()
+                conn.close()
+                logger.info(f"✅ Data imerejeshwa kutoka: {backup_file}")
+                
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Kosa katika restore_backup: {e}")
+            return False
+    
+    def list_backups(self):
+        """
+        Orodhesha backups zote zilizopo
+        """
+        try:
+            backups = []
+            for file in os.listdir(self.backup_dir):
+                if file.startswith('backup_') and file.endswith('.zip'):
+                    filepath = os.path.join(self.backup_dir, file)
+                    stats = os.stat(filepath)
+                    
+                    backups.append({
+                        'filename': file,
+                        'size': stats.st_size,
+                        'created': datetime.fromtimestamp(stats.st_ctime).isoformat(),
+                        'type': file.split('_')[1] if '_' in file else 'unknown'
+                    })
+                    
+            return sorted(backups, key=lambda x: x['created'], reverse=True)
+            
+        except Exception as e:
+            logger.error(f"❌ Kosa katika list_backups: {e}")
+            return []
+    
+    def cleanup_old_backups(self, keep_last=10):
+        """
+        Futa backups za zamani, weka za mwisho tu
+        """
+        try:
+            backups = self.list_backups()
+            
+            if len(backups) > keep_last:
+                to_delete = backups[keep_last:]
+                
+                for backup in to_delete:
+                    filepath = os.path.join(self.backup_dir, backup['filename'])
+                    os.remove(filepath)
+                    logger.info(f"🗑️ Backup imefutwa: {backup['filename']}")
+                    
+            return len(backups) - keep_last if len(backups) > keep_last else 0
+            
+        except Exception as e:
+            logger.error(f"❌ Kosa katika cleanup_old_backups: {e}")
+            return 0
